@@ -43,11 +43,14 @@ cd project_name
 
 # Start development server
 npm run dev
+
+# stop the server
+CTRL + C
 ```
 
 **Project Structure:**
 
-```
+```text
 my-react-app/
 ├── node_modules/
 ├── public/
@@ -71,6 +74,32 @@ my-react-app/
 └── vite.config.ts
 ```
 
+#### Folder Structure
+
+- node_modules
+  Contains all dependencies required by the app. Main dependencies also listed in package.json
+
+- public
+  Contains static assets
+
+- index.html
+
+  - id="root" - our entire app
+
+- src
+  In simplest form it's the brain of our app. This is where we will do all of our work. src/index.js is the JavaScript entry point.
+- .gitignore
+  Specifies which files source control (Git) should ignore
+
+- package.json
+  Every Node.js project has a package.json and it contains info about our project, for example list of dependencies and scripts
+
+- package-lock.json
+  A snapshot of the entire dependency tree
+
+- README
+  The markdown file where you can share more info about the project for example build instructions and summary
+
 ---
 
 ---
@@ -83,7 +112,7 @@ my-react-app/
 
 JSX (JavaScript XML) is a syntax extension that allows you to write HTML-like code in JavaScript. It gets compiled to regular JavaScript function calls.
 
-**Rules:**
+**Rules Summary:**
 
 - Must return a single parent element
 - Use `className` instead of `class`
@@ -110,6 +139,118 @@ function Greeting() {
 export default Greeting;
 ```
 
+**Everything is actually js**
+
+```jsx
+return (
+  <div>
+    <h2>hello world</h2>
+  </div>
+);
+// Or
+return React.createElement(
+  "div",
+  {},
+  React.createElement("h2", {}, "hello world")
+);
+```
+
+### JSX Rules
+
+- Every component should return single element (one parent element)
+
+  - semantics section/article
+  - Fragment - let's us group elements without adding extra nodes
+
+```js
+return <React.Fragment>...rest of the return</React.Fragment>;
+
+// shorthand
+
+return <>...rest of the return</>;
+```
+
+- camelCase property naming convention
+
+```js
+return (
+  <div tabIndex={1}>
+    <button onClick={myFunction}>click me</button>
+    <label htmlFor='name'>Name</label>
+    <input readOnly={true} id='name' />
+  </div>
+)
+// in html
+<div tabindex="1">
+    <button onclick="myFunction()">click me</button>
+    <label for='name'>Name</label>
+    <input readonly id='name' />
+</div>
+```
+
+- className instead of class
+
+```js
+return <div className="someValue">hello</div>;
+```
+
+- Close every element
+
+```js
+return <img />;
+// or
+return <input />;
+```
+
+- Formatting
+  - opening tag in the same line as return or ()
+
+```js
+function Greeting() {
+  return (
+    <div className="someValue">hello</div>;
+  );
+}
+
+function Greeting() {
+  return <div className="someValue">hello</div>;
+}
+```
+
+#### React Developer Tools
+
+- top right corner
+- more tools/extensions
+- open chrome web store
+
+![Debugger Meme](/debug.png)
+
+#### Extensions and settings.json
+
+- Auto Rename Tag
+- ES7+ React/Redux/React-Native snippets
+- Prettier
+  - format on save
+  - format on paste
+  - Default Formatter (Prettier - Code formatter)
+- customize in settings.json or settings icon on left > settings > search
+
+settings.json
+
+```json
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+```
+
+- ES7 Snippets
+  - rafce (arrow func with export)
+  - rfce (regular func with export )
+  - same as the file name
+  - Import React On Top
+    - uncheck
+    - React Snippets › Settings: Import React On Top
+
 ---
 
 ---
@@ -122,7 +263,27 @@ export default Greeting;
 
 React supports multiple styling approaches: CSS files, inline styles, CSS Modules, and CSS-in-JS libraries.
 
-**Example 1: CSS Module**
+**Example 1: CSS**
+
+```css
+/* Button.css */
+.button {
+  background-color: #007bff;
+}
+```
+
+```tsx
+// Button.tsx
+import "./Button.css";
+
+function Button() {
+  return <button className="button">Click Me</button>;
+}
+
+export default Button;
+```
+
+**Example 2: CSS Module**
 
 ```css
 /* Button.module.css */
@@ -142,7 +303,11 @@ function Button() {
 export default Button;
 ```
 
-**Example 2: Inline Styles**
+**Example 3: Inline Styles**
+
+- style prop
+- {} in JSX means going back to JS Land
+- value is an object with key/value pairs - capitalized and with ''
 
 ```tsx
 import { CSSProperties } from "react";
