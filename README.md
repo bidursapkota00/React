@@ -684,6 +684,52 @@ export default ProductCard;
 
 ![Laptop Product Output](/laptop-product.png)
 
+#### Local Images (src folder)
+
+- better performance because optimized **(hashing and caching)**
+- add one more book to array
+- download all three images (rename)
+- setup images folder in the src
+- import all three images in the App.tsx
+- set image property equal to import
+- and yes each image requires new import
+
+**Update App.tsx**
+
+```tsx
+import ProductCard from "./ProductCard";
+import acerImage from "./images/acer-predator.jpeg";
+import macImage from "./images/macbook-air.jpg";
+import lenovoImage from "./images/lenovo-legion.jpg";
+
+function App() {
+  const laptops = [
+    {
+      name: "Acer Predator",
+      price: 300000,
+      image: acerImage,
+    },
+    { name: "Macbook Air", price: 150000, image: macImage },
+    {
+      name: "Lenovo Legion",
+      price: 200000,
+      image: lenovoImage,
+    },
+  ];
+
+  return (
+    <div>
+      <h2>Products:</h2>
+      {laptops.map((laptop, index) => (
+        <ProductCard key={index} {...laptop} />
+      ))}
+    </div>
+  );
+}
+
+export default App;
+```
+
 ---
 
 ---
