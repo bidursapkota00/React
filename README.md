@@ -76,28 +76,36 @@ my-react-app/
 
 #### Folder Structure
 
-- node_modules
+- `node_modules`
+
   Contains all dependencies required by the app. Main dependencies also listed in package.json
 
-- public
+- `public`
+
   Contains static assets
 
 - index.html
 
   - id="root" - our entire app
 
-- src
+- `src`
+
   In simplest form it's the brain of our app. This is where we will do all of our work. src/index.js is the JavaScript entry point.
-- .gitignore
+
+- `.gitignore`
+
   Specifies which files source control (Git) should ignore
 
-- package.json
+- `package.json`
+
   Every Node.js project has a package.json and it contains info about our project, for example list of dependencies and scripts
 
-- package-lock.json
+- `package-lock.json`
+
   A snapshot of the entire dependency tree
 
-- README
+- `README`
+
   The markdown file where you can share more info about the project for example build instructions and summary
 
 ---
@@ -386,29 +394,182 @@ Props (properties) allow you to pass data from parent to child components. Props
 **Example:**
 
 ```tsx
-// UserCard.tsx
-interface UserCardProps {
-  name: string;
-  age: number;
-  city: string;
+// ProductCard.tsx
+
+// 1. WITHOUT DESTRUCTURING
+interface ProductCardProps {
+  brand: string;
+  ram: number;
+  price: number;
 }
 
-function UserCard({ name, age, city }: UserCardProps) {
+function ProductCard(props: ProductCardProps) {
   return (
     <div className="card">
-      <h3>{name}</h3>
-      <p>Age: {age}</p>
-      <p>City: {city}</p>
+      <h3>{props.brand}</h3>
+      <p>RAM: {props.ram}GB</p>
+      <p>Price: ${props.price}</p>
     </div>
   );
 }
+
+export default ProductCard;
+
 
 // App.tsx
 function App() {
   return (
     <div>
-      <UserCard name="John" age={28} city="New York" />
-      <UserCard name="Sarah" age={32} city="London" />
+      <h2>Products:</h2>
+      <ProductCard brand="Dell" ram={16} price={899} />
+      <ProductCard brand="HP" ram={8} price={649} />
+      <ProductCard brand="Lenovo" ram={32} price={1299} />
+    </div>
+  );
+}
+
+export default App;
+
+
+// 2. Passing whole object
+
+interface ProductCardProps {
+  laptop: {
+    brand: string;
+    ram: number;
+    price: number;
+  };
+}
+
+function ProductCard(props: ProductCardProps) {
+  const { brand, ram, price } = props.laptop;
+  return (
+    <div className="card">
+      <h3>{brand}</h3>
+      <p>RAM: {ram}GB</p>
+      <p>Price: ${price}</p>
+    </div>
+  );
+}
+
+function App() {
+  const laptop1 = { brand: "Dell", ram: 16, price: 899 };
+  const laptop2 = { brand: "HP", ram: 8, price: 649 };
+  const laptop3 = { brand: "Lenovo", ram: 32, price: 1299 };
+
+  return (
+    <div>
+      <h2>Products:</h2>
+      <ProductCard laptop={laptop1} />
+      <ProductCard laptop={laptop2} />
+      <ProductCard laptop={laptop3} />
+    </div>
+  );
+}
+
+// 3. WITH DESTRUCTURING
+function ProductCard({ brand, ram, price }: ProductCardProps) {
+  return (
+    <div className="card">
+      <h3>{brand}</h3>
+      <p>RAM: {ram}GB</p>
+      <p>Price: ${price}</p>
+    </div>
+  );
+}
+
+
+// 4. ARRAY OF OBJECTS WITH MAP
+function App() {
+  const laptops = [
+    { brand: "Dell", ram: 16, price: 899 },
+    { brand: "HP", ram: 8, price: 649 },
+    { brand: "Lenovo", ram: 32, price: 1299 },
+  ];
+
+  return (
+    <div>
+      <h2>With Map:</h2>
+      {laptops.map((laptop, index) => (
+        <ProductCard
+          key={index}
+          brand={laptop.brand}
+          ram={laptop.ram}
+          price={laptop.price}
+        />
+      ))}
+    </div>
+  );
+}
+
+// 5. Passing whole object (using spread operator)
+function App() {
+  const laptops = [
+    { brand: "Dell", ram: 16, price: 899 },
+    { brand: "HP", ram: 8, price: 649 },
+    { brand: "Lenovo", ram: 32, price: 1299 },
+  ];
+
+  return (
+    <div>
+      <h2>With Map:</h2>
+      {laptops.map((laptop, index) => (
+          return <ProductCard key={index} {...laptop} />;
+      ))}
+    </div>
+  );
+}
+```
+
+#### Children Prop
+
+- everything we render between component tags
+- during the course we will mostly use it Context API
+- special prop, has to be "children"
+- can place anywhere in JSX
+
+```tsx
+// ProductCard.tsx
+interface ProductCardProps {
+  brand: string;
+  ram: number;
+  price: number;
+  children: React.ReactNode;
+}
+
+function ProductCard({ brand, ram, price, children }: ProductCardProps) {
+  return (
+    <div className="card">
+      <h3>{brand}</h3>
+      <p>RAM: {ram}GB</p>
+      <p>Price: ${price}</p>
+      <div>{children}</div>
+    </div>
+  );
+}
+
+export default ProductCard;
+
+// App.tsx
+import ProductCard from "./ProductCard";
+
+function App() {
+  const laptops = [
+    { brand: "Dell", ram: 16, price: 899 },
+    { brand: "Lenovo", ram: 32, price: 1299 },
+    { brand: "HP", ram: 8, price: 649 },
+  ];
+
+  return (
+    <div>
+      <h2>Products:</h2>
+      {laptops.map((laptop, index) => (
+        <ProductCard key={index} {...laptop}>
+          <p>
+            This is a <strong>description</strong>
+          </p>
+        </ProductCard>
+      ))}
     </div>
   );
 }
