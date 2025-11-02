@@ -11,17 +11,18 @@
 3. [CSS Styling](#css-styling)
 4. [Components](#components)
 5. [Props](#props)
-6. [State with useState](#state-with-usestate)
-7. [Event Handling](#event-handling)
-8. [Conditional Rendering](#conditional-rendering)
-9. [Lists and Keys](#lists-and-keys)
-10. [Forms and Controlled Components](#forms-and-controlled-components)
-11. [useEffect Hook](#useeffect-hook)
-12. [useRef Hook](#useref-hook)
-13. [Custom Hooks](#custom-hooks)
-14. [Context API](#context-api)
-15. [useReducer Hook](#usereducer-hook)
-16. [React Router](#react-router)
+6. [Images](#images)
+7. [State with useState](#state-with-usestate)
+8. [Event Handling](#event-handling)
+9. [Conditional Rendering](#conditional-rendering)
+10. [Lists and Keys](#lists-and-keys)
+11. [Forms and Controlled Components](#forms-and-controlled-components)
+12. [useEffect Hook](#useeffect-hook)
+13. [useRef Hook](#useref-hook)
+14. [Custom Hooks](#custom-hooks)
+15. [Context API](#context-api)
+16. [useReducer Hook](#usereducer-hook)
+17. [React Router](#react-router)
 
 ---
 
@@ -84,7 +85,7 @@ my-react-app/
 
   Contains static assets
 
-- index.html
+- `index.html`
 
   - id="root" - our entire app
 
@@ -243,7 +244,7 @@ function Greeting() {
   - Default Formatter (Prettier - Code formatter)
 - customize in settings.json or settings icon on left > settings > search
 
-settings.json
+**settings.json**
 
 ```json
   "editor.formatOnPaste": true,
@@ -398,16 +399,14 @@ Props (properties) allow you to pass data from parent to child components. Props
 
 // 1. WITHOUT DESTRUCTURING
 interface ProductCardProps {
-  brand: string;
-  ram: number;
+  name: string;
   price: number;
 }
 
 function ProductCard(props: ProductCardProps) {
   return (
     <div className="card">
-      <h3>{props.brand}</h3>
-      <p>RAM: {props.ram}GB</p>
+      <h3>{props.name}</h3>
       <p>Price: ${props.price}</p>
     </div>
   );
@@ -421,9 +420,9 @@ function App() {
   return (
     <div>
       <h2>Products:</h2>
-      <ProductCard brand="Dell" ram={16} price={899} />
-      <ProductCard brand="HP" ram={8} price={649} />
-      <ProductCard brand="Lenovo" ram={32} price={1299} />
+      <ProductCard name="Acer Predator" price={300000} />
+      <ProductCard name="Macbook Air" price={150000} />
+      <ProductCard name="Lenovo Legion" price={200000} />
     </div>
   );
 }
@@ -435,27 +434,25 @@ export default App;
 
 interface ProductCardProps {
   laptop: {
-    brand: string;
-    ram: number;
+    name: string;
     price: number;
   };
 }
 
 function ProductCard(props: ProductCardProps) {
-  const { brand, ram, price } = props.laptop;
+  const { name, price } = props.laptop;
   return (
     <div className="card">
-      <h3>{brand}</h3>
-      <p>RAM: {ram}GB</p>
+      <h3>{name}</h3>
       <p>Price: ${price}</p>
     </div>
   );
 }
 
 function App() {
-  const laptop1 = { brand: "Dell", ram: 16, price: 899 };
-  const laptop2 = { brand: "HP", ram: 8, price: 649 };
-  const laptop3 = { brand: "Lenovo", ram: 32, price: 1299 };
+  const laptop1 = { name: "Acer Predator", price: 300000 };
+  const laptop2 = { name: "Macbook Air", price: 150000 };
+  const laptop3 = { name: "Lenovo Legion", price: 200000 };
 
   return (
     <div>
@@ -468,11 +465,10 @@ function App() {
 }
 
 // 3. WITH DESTRUCTURING
-function ProductCard({ brand, ram, price }: ProductCardProps) {
+function ProductCard({ name, price }: ProductCardProps) {
   return (
     <div className="card">
-      <h3>{brand}</h3>
-      <p>RAM: {ram}GB</p>
+      <h3>{name}</h3>
       <p>Price: ${price}</p>
     </div>
   );
@@ -482,19 +478,18 @@ function ProductCard({ brand, ram, price }: ProductCardProps) {
 // 4. ARRAY OF OBJECTS WITH MAP
 function App() {
   const laptops = [
-    { brand: "Dell", ram: 16, price: 899 },
-    { brand: "HP", ram: 8, price: 649 },
-    { brand: "Lenovo", ram: 32, price: 1299 },
+    { name: "Acer Predator", price: 300000 },
+    { name: "Macbook Air", price: 150000 },
+    { name: "Lenovo Legion", price: 200000 },
   ];
 
   return (
     <div>
-      <h2>With Map:</h2>
+      <h2>Products:</h2>
       {laptops.map((laptop, index) => (
         <ProductCard
           key={index}
-          brand={laptop.brand}
-          ram={laptop.ram}
+          name={laptop.name}
           price={laptop.price}
         />
       ))}
@@ -505,14 +500,14 @@ function App() {
 // 5. Passing whole object (using spread operator)
 function App() {
   const laptops = [
-    { brand: "Dell", ram: 16, price: 899 },
-    { brand: "HP", ram: 8, price: 649 },
-    { brand: "Lenovo", ram: 32, price: 1299 },
+    { name: "Acer Predator", price: 300000 },
+    { name: "Macbook Air", price: 150000 },
+    { name: "Lenovo Legion", price: 200000 },
   ];
 
   return (
     <div>
-      <h2>With Map:</h2>
+      <h2>Products:</h2>
       {laptops.map((laptop, index) => (
           return <ProductCard key={index} {...laptop} />;
       ))}
@@ -531,18 +526,16 @@ function App() {
 ```tsx
 // ProductCard.tsx
 interface ProductCardProps {
-  brand: string;
-  ram: number;
+  name: string;
   price: number;
   children: React.ReactNode;
 }
 
-function ProductCard({ brand, ram, price, children }: ProductCardProps) {
+function ProductCard({ name, price, children }: ProductCardProps) {
   return (
     <div className="card">
-      <h3>{brand}</h3>
-      <p>RAM: {ram}GB</p>
-      <p>Price: ${price}</p>
+      <h3>{name}</h3>
+      <p>Price: Rs. {price}</p>
       <div>{children}</div>
     </div>
   );
@@ -555,9 +548,9 @@ import ProductCard from "./ProductCard";
 
 function App() {
   const laptops = [
-    { brand: "Dell", ram: 16, price: 899 },
-    { brand: "Lenovo", ram: 32, price: 1299 },
-    { brand: "HP", ram: 8, price: 649 },
+    { name: "Acer Predator", price: 300000 },
+    { name: "Macbook Air", price: 150000 },
+    { name: "Lenovo Legion", price: 200000 },
   ];
 
   return (
@@ -576,6 +569,120 @@ function App() {
 
 export default App;
 ```
+
+#### Styling Card
+
+Create `ProductCard.css`
+
+```css
+.card {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: inline-block;
+  margin-right: 20px;
+}
+```
+
+Update `ProductCard.tsx`
+
+```tsx
+import "./ProductCard.css";
+
+// ...
+```
+
+---
+
+---
+
+---
+
+## Images
+
+#### Local Images (Public Folder)
+
+- external images (hosted on different server) - just need an url
+- local images (public folder) - less performant
+- local images (src folder) - better solution for assets, since under the hood they get optimized.
+
+- save image (Save Image As....)
+- create images folder in public
+- copy/paste image
+- rename (optional)
+- replace url in the src - './images/imageName.extension'
+- './' because assets are on the same server
+
+```js
+const Image = () => (
+  <img src="./images/book-1.jpg" alt="Interesting Facts For Curious Minds" />
+);
+```
+
+- whatever assets we place in public - instantly available
+- domain(localhost)/asset
+
+**Update App.tsx**
+
+Add images
+
+```tsx
+// ...
+const laptops = [
+  {
+    name: "Acer Predator",
+    price: 300000,
+    image: "./images/acer-predator.jpeg",
+  },
+  { name: "Macbook Air", price: 150000, image: "./images/macbook-air.jpg" },
+  {
+    name: "Lenovo Legion",
+    price: 200000,
+    image: "./images/lenovo-legion.jpg",
+  },
+];
+// ...
+```
+
+**Update ProductCard.tsx**
+
+```tsx
+import "./ProductCard.css";
+
+interface ProductCardProps {
+  name: string;
+  price: number;
+  image: string;
+}
+
+function ProductCard({ name, price, image }: ProductCardProps) {
+  return (
+    <div className="card">
+      <img src={image} alt="Product Image" />
+      <h3>{name}</h3>
+      <p>Price: Rs. {price}</p>
+    </div>
+  );
+}
+
+export default ProductCard;
+```
+
+**Update ProductCard.css**
+
+```css
+/* // ... */
+.card > img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  display: inline-block;
+}
+```
+
+**Output:**
+
+![Laptop Product Output](/laptop-product.png)
 
 ---
 
