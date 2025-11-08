@@ -13,16 +13,13 @@
 5. [Props](#props)
 6. [Images](#images)
 7. [State with useState](#state-with-usestate)
-8. [Event Handling](#event-handling)
-9. [Conditional Rendering](#conditional-rendering)
-10. [Lists and Keys](#lists-and-keys)
-11. [Forms and Controlled Components](#forms-and-controlled-components)
-12. [useEffect Hook](#useeffect-hook)
-13. [useRef Hook](#useref-hook)
-14. [Custom Hooks](#custom-hooks)
-15. [Context API](#context-api)
-16. [useReducer Hook](#usereducer-hook)
-17. [React Router](#react-router)
+8. [Forms and Controlled Components](#forms-and-controlled-components)
+9. [useEffect Hook](#useeffect-hook)
+10. [useRef Hook](#useref-hook)
+11. [Custom Hooks](#custom-hooks)
+12. [Context API](#context-api)
+13. [useReducer Hook](#usereducer-hook)
+14. [React Router](#react-router)
 
 ---
 
@@ -516,6 +513,8 @@ function App() {
 }
 ```
 
+Use `map()` to transform an array into JSX elements. Each item needs a unique `key` prop to help React identify which items changed. Keys should be stable, predictable, and unique.
+
 #### Children Prop
 
 - everything we render between component tags
@@ -738,9 +737,49 @@ export default App;
 
 ## State with useState
 
+### The Need For State
+
+- in App.jsx setup import and container div
+
+  Setup Challenge :
+
+- create count variable
+- display value in the JSX
+- add button and increase the value
+- the reason for bug - we don't trigger re-render
+
+```js
+const ErrorExample = () => {
+  let count = 0;
+
+  const handleClick = () => {
+    count = count + 1;
+    console.log(count);
+    // preserve value between renders
+    // trigger re-render
+  };
+  return (
+    <div>
+      <h2>{count}</h2>
+      <button type="button" className="btn" onClick={handleClick}>
+        increment
+      </button>
+    </div>
+  );
+};
+
+export default ErrorExample;
+```
+
 ### Managing Component State
 
-State allows components to remember information. When state changes, the component re-renders. `useState` returns an array with the current state value and a function to update it.
+#### useState Basics
+
+- useState hook
+- returns an array with two elements: the current state value, and a function that we can use to update the state
+- destructuring from array (js basics)
+- accepts default value as an argument
+- state update triggers re-render
 
 **Example:**
 
@@ -750,10 +789,14 @@ import { useState } from "react";
 function Counter() {
   const [count, setCount] = useState<number>(0);
 
+  const handleClick = () => {
+    setCount(count + 1);
+  };
+
   return (
     <div>
       <h2>Count: {count}</h2>
-      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <button onClick={handleClick}>Increment</button>
       <button onClick={() => setCount(count - 1)}>Decrement</button>
       <button onClick={() => setCount(0)}>Reset</button>
     </div>
@@ -763,70 +806,80 @@ function Counter() {
 export default Counter;
 ```
 
----
+#### Initial Render and Re-Renders
 
----
+In a React application, the initial render is the first time that the component tree is rendered to the DOM. It happens when the application first loads, or when the root component is first rendered. This is also known as "mounting" the components.
 
----
+Re-renders, on the other hand, happen when the component's state or props change, and the component needs to be updated in the DOM to reflect these changes. React uses a virtual DOM to optimize the process of updating the actual DOM, so that only the necessary changes are made.
 
-## Event Handling
+There are a few ways that you can trigger a re-render in a React component:
 
-### Handling User Interactions
+- By changing the component's state or props. When the component's state or props change, React will re-render the component to reflect these changes.
 
-React events are named using camelCase. Pass a function reference, not a function call. You can pass arguments using arrow functions.
+- When the parent element re-renders, even if the component's state or props have not changed.
 
-**Example:**
+**Infinite loop warning**
 
 ```tsx
-import { useState, FormEvent, ChangeEvent } from "react";
-
-function EventDemo() {
-  const [message, setMessage] = useState<string>("");
-
-  const handleClick = (): void => {
-    setMessage("Button clicked!");
-  };
-
-  const handleInput = (e: ChangeEvent<HTMLInputElement>): void => {
-    setMessage(e.target.value);
-  };
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
-    e.preventDefault();
-    alert(`Submitted: ${message}`);
-  };
-
-  return (
-    <div>
-      <button onClick={handleClick}>Click Me</button>
-
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={message}
-          onChange={handleInput}
-          placeholder="Type something..."
-        />
-        <button type="submit">Submit</button>
-      </form>
-
-      <p>Message: {message}</p>
-    </div>
-  );
-}
-
-export default EventDemo;
+const handleClick = () => {
+  setCount(count + 1);
+};
+handleClick();
 ```
 
----
+- initial render happens
+- handleClick is called - it changes state
+- state change cause re-render
+- re-render calls handleClick
 
----
+#### General Rules of Hooks
 
----
+- starts with "use" (both -react and custom hooks)
+- invoke inside function/component body
+- don't call hooks conditionally
+- set functions don't update state immediately (`setCount(count => count + 1)`)
 
-## Conditional Rendering
+**State update is not immediate**
 
-### Showing Different Content Based on Conditions
+```tsx
+const handleClick = () => {
+  // count is zero initially
+  setCount((count) => count + 1);
+  console.log(count); // prints zero not one
+};
+```
+
+```tsx
+const handleClick = () => {
+  // setTimeout(() => {
+  //   setCount(count + 1);
+  // }, 3000);
+  setTimeout(() => {
+    setCount((count) => count + 1);
+  }, 3000);
+};
+```
+
+#### Automatic Batching
+
+In React, "batching" refers to the process of grouping multiple state updates into a single update. This can be useful in certain cases because it allows React to optimize the rendering of your components by minimizing the number of DOM updates that it has to perform.
+
+By default, React uses a technique called "auto-batching" to group state updates that occur within the same event loop into a single update. This means that if you call the state update function multiple times in a short period of time, React will only perform a single re-render for all of the updates.
+
+React 18 ensures that state updates invoked from any location will be batched by default. This will batch state updates, including native event handlers, asynchronous operations, timeouts, and intervals.
+
+```tsx
+const handleClick = () => {
+  setCount((count) => count + 1);
+  setCount((count) => count + 1);
+  setCount((count) => count + 1);
+  setCount((count) => count + 1);
+  console.log(count);
+};
+console.log("hello"); // runs once (twice due to strict mode in dev)
+```
+
+### Conditional Rendering
 
 You can use JavaScript operators like `if`, ternary operator `? :`, and logical AND `&&` to conditionally render elements.
 
@@ -857,59 +910,6 @@ function LoginStatus() {
 }
 
 export default LoginStatus;
-```
-
----
-
----
-
----
-
-## Lists and Keys
-
-### Rendering Multiple Items
-
-Use `map()` to transform an array into JSX elements. Each item needs a unique `key` prop to help React identify which items changed. Keys should be stable, predictable, and unique.
-
-**Example:**
-
-```tsx
-import { CSSProperties } from "react";
-
-interface Todo {
-  id: number;
-  text: string;
-  completed: boolean;
-}
-
-function TodoList() {
-  const todos: Todo[] = [
-    { id: 1, text: "Learn React", completed: true },
-    { id: 2, text: "Build a project", completed: false },
-    { id: 3, text: "Master Vite", completed: false },
-  ];
-
-  return (
-    <div>
-      <h2>My Todo List</h2>
-      <ul>
-        {todos.map((todo) => {
-          const textStyle: CSSProperties = {
-            textDecoration: todo.completed ? "line-through" : "none",
-          };
-
-          return (
-            <li key={todo.id}>
-              <span style={textStyle}>{todo.text}</span>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-}
-
-export default TodoList;
 ```
 
 ---
