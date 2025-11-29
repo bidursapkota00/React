@@ -235,6 +235,8 @@ function Greeting() {
 
 - Auto Rename Tag
 - ES7+ React/Redux/React-Native snippets
+- glean
+  - easy extract JSX into a new component
 - Prettier
   - format on save
   - format on paste
@@ -881,7 +883,7 @@ console.log("hello"); // runs once (twice due to strict mode in dev)
 
 ### Conditional Rendering
 
-You can use JavaScript operators like `if`, ternary operator `? :`, and logical AND `&&` to conditionally render elements.
+You can use JavaScript operators like `if`, ternary operator `? :`, and logical AND `&&` (Short Circuit Evaluation) to conditionally render elements.
 
 **Example:**
 
@@ -927,7 +929,7 @@ In controlled components, React state is the "single source of truth". The input
 **Example:**
 
 ```tsx
-import { useState, FormEvent, ChangeEvent } from "react";
+import { useState, type FormEvent, type ChangeEvent } from "react";
 
 interface FormData {
   username: string;
@@ -1011,7 +1013,16 @@ export default RegistrationForm;
 
 ### Side Effects in Components
 
-`useEffect` lets you perform side effects like data fetching, subscriptions, or DOM manipulation. It runs after render. The dependency array controls when it re-runs.
+useEffect is a hook in React that allows you to perform side effects in function components. Some examples of side effects are: subscriptions, fetching data, directly updating the DOM, event listeners, timers, etc.
+
+- accepts two arguments (second optional)
+- first argument - cb function
+- second argument - dependency array
+- by default runs on each render (initial and re-render)
+- cb can't return promise (so can't make it async)
+- if dependency array empty [] runs only on initial render
+
+Note: subscription refers to listening to some external data source or event stream so your component can react to updates over time. Like websocket connection, firestore listner, scroll events, etc
 
 **Example 1: Event Listener + Cleanup**
 
@@ -1045,6 +1056,27 @@ function WindowResizeListener() {
 }
 
 export default WindowResizeListener;
+```
+
+**If you want to test cleanup**
+
+```tsx
+import React from "react";
+import WindowResizeListener from "./Test.tsx";
+
+export default function Unmount() {
+  const [isMounted, setIsMounted] = React.useState(true);
+
+  const handleUnmount = () => {
+    setIsMounted(!isMounted);
+  };
+  return (
+    <>
+      {isMounted && <WindowResizeListener />}
+      <button onClick={handleUnmount}>Unmount</button>
+    </>
+  );
+}
 ```
 
 **Example 2: Fetching Data from JSONPlaceholder**
@@ -1103,6 +1135,8 @@ function FetchUsers() {
 export default FetchUsers;
 ```
 
+**Test by setting network throttling to 3G.**
+
 ---
 
 ---
@@ -1113,7 +1147,10 @@ export default FetchUsers;
 
 ### Accessing DOM Elements and Persisting Values
 
-`useRef` creates a mutable reference that persists across renders without causing re-renders. Commonly used for accessing DOM elements or storing values that don't need to trigger updates.
+- lets you store a mutable value
+- preserves the value between renders
+- DOES NOT TRIGGER RE-RENDER
+- target DOM nodes/elements
 
 **Example:**
 
@@ -1172,45 +1209,75 @@ Custom hooks let you extract component logic into reusable functions. They must 
 
 **Example:**
 
+Create `/src/hooks/useFetch.ts`
+
 ```tsx
 import { useState, useEffect } from "react";
 
-// Custom Hook
-function useWindowWidth(): number {
-  const [width, setWidth] = useState<number>(window.innerWidth);
+const useFetch = <T,>(url: string) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const [data, setData] = useState<T | null>(null);
 
   useEffect(() => {
-    const handleResize = (): void => {
-      setWidth(window.innerWidth);
+    const fetchData = async () => {
+      try {
+        const resp = await fetch(url);
+
+        if (!resp.ok) {
+          setIsError(true);
+          setIsLoading(false);
+          return;
+        }
+        const response = await resp.json();
+        setData(response);
+      } catch (error) {
+        setIsError(true);
+      }
+      setIsLoading(false);
     };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
+    fetchData();
   }, []);
 
-  return width;
+  return [data, isLoading, isError] as const;
+};
+
+export default useFetch;
+```
+
+**Now use anywhere**
+
+```tsx
+import useFetch from "./hooks/useFetch";
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
 }
 
-// Using the custom hook
-function WindowSize() {
-  const width = useWindowWidth();
+const url = "https://jsonplaceholder.typicode.com/users";
 
-  const getDeviceType = (): string => {
-    if (width < 768) return "Mobile";
-    if (width < 1024) return "Tablet";
-    return "Desktop";
-  };
+export default function FetchUsers() {
+  const [users, isLoading, isError] = useFetch<User[]>(url);
+
+  if (isLoading) return <p>Loading users...</p>;
+  if (isError)
+    return <p style={{ color: "red" }}>Error: Something went wrong</p>;
 
   return (
     <div>
-      <h2>Window Width: {width}px</h2>
-      <p>{getDeviceType()}</p>
+      <h2>User List</h2>
+      <ul>
+        {users?.map((user) => (
+          <li key={user.id}>
+            <strong>{user.name}</strong> — {user.email}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
-
-export default WindowSize;
 ```
 
 ---
