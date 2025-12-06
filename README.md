@@ -20,6 +20,7 @@
 12. [Context API](#context-api)
 13. [useReducer Hook](#usereducer-hook)
 14. [React Router](#react-router)
+15. [Optimizations](#optimizations)
 
 ---
 
@@ -1294,6 +1295,58 @@ Context provides a way to pass data through the component tree without passing p
 
 **Example: Theming**
 
+**Add this to index.css**
+
+```css
+:root {
+  --bg-color: #ffffff;
+  --fg-color: #000000;
+}
+
+:root[data-theme="dark"] {
+  --bg-color: #121212;
+  --fg-color: #ffffff;
+}
+
+body {
+  margin: 0;
+}
+
+.theme-container {
+  background-color: var(--bg-color);
+  color: var(--fg-color);
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+button {
+  padding: 8px 14px;
+  border: none;
+  cursor: pointer;
+  background: var(--fg-color);
+  color: var(--bg-color);
+  border-radius: 6px;
+}
+```
+
+**Add this to App.tsx**
+
+**Use theme anywhere `src/App.tsx`**
+
+```tsx
+export default function App() {
+  return (
+    <div className="theme-container">
+      <h2>Theme</h2>
+      <button>Toggle Theme</button>
+    </div>
+  );
+}
+```
+
+**Inspect Elements in browser. Double click on html. Add `data-theme="dark"` to see result.**
+<br>
+
 **Create theme context and theme provider `src/context/ThemeContext.tsx`**
 
 ```tsx
@@ -1365,7 +1418,7 @@ createRoot(document.getElementById("root")!).render(
 );
 ```
 
-**Use theme anywhere `src/App.tsx`**
+**Use theme anywhere. Edit `src/App.tsx` to add useTheme**
 
 ```tsx
 import { useTheme } from "./context/ThemeContext";
@@ -1527,3 +1580,82 @@ export default App;
 ---
 
 ---
+
+## Optimizations
+
+**memo()**
+
+- We use memo on the Child so it doesn't re-render when the state of Parent changes but child does not depend on that state.
+- Wraps a component to prevent re-renders when props are unchanged
+
+**useCallback()**
+
+- We use useCallback to pass a stable function to the Child.
+- Memoizes a function so it keeps the same reference
+
+**useMemo()**
+
+- We use useMemo to cache a "heavy" math operation.
+- Memoizes a computed value to avoid expensive recalculations
+  <br>
+
+**Example:**
+
+```tsx
+import { useState, memo, useCallback, useMemo } from "react";
+
+type ChildProps = {
+  label: string;
+  onLog: () => void;
+};
+
+// Goal: 'Child' will ONLY re-render if 'label' or 'onLog' changes.
+const Child = memo(({ label, onLog }: ChildProps) => {
+  console.log("Child re-rendered");
+
+  return (
+    <div style={{ border: "1px solid grey", padding: 10, marginTop: 10 }}>
+      <p>Child Component: {label}</p>
+      <button onClick={onLog}>Log to Console</button>
+    </div>
+  );
+});
+
+export const Parent = () => {
+  const [count, setCount] = useState(0);
+  const [darkTheme, setDarkTheme] = useState(false);
+
+  // Goal: Only run this heavy math when 'count' changes, not when 'darkTheme' changes.
+  const expensiveValue = useMemo(() => {
+    console.log("Calculating expensive value...");
+    return count * 1_000_000; // Imagine a slow loop here
+  }, [count]);
+
+  // Goal: Keep this function identical between renders so 'Child' doesn't re-render.
+  const handleLog = useCallback(() => {
+    console.log("Log triggered from child");
+  }, []); // Empty dependency array = function never changes
+
+  return (
+    <div
+      style={{
+        background: darkTheme ? "#333" : "#FFF",
+        color: darkTheme ? "#FFF" : "#000",
+        padding: 20,
+      }}
+    >
+      <h1>Parent Component</h1>
+
+      <p>Count: {count}</p>
+      <p>Expensive Result: {expensiveValue}</p>
+
+      <button onClick={() => setCount((c) => c + 1)}>Increment Count</button>
+      <button onClick={() => setDarkTheme((prev) => !prev)}>
+        Toggle Theme
+      </button>
+
+      <Child label="I am static" onLog={handleLog} />
+    </div>
+  );
+};
+```
