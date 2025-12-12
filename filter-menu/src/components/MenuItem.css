@@ -1,0 +1,40 @@
+.menu-item {
+  background: var(--white);
+  border-radius: var(--borderRadius);
+  max-width: 25rem;
+}
+
+.menu-item .img {
+  height: 15rem;
+  border-top-right-radius: var(--borderRadius);
+  border-top-left-radius: var(--borderRadius);
+}
+
+.item-info {
+  padding: 1.5rem;
+}
+
+.item-info header {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.item-info h5 {
+  font-weight: 500;
+}
+
+.item-price {
+  background: var(--primary-500);
+  color: var(--white);
+  padding: 0.25rem 0.5rem;
+  letter-spacing: var(--letterSpacing);
+  border-radius: var(--borderRadius);
+}
+
+.item-text {
+  line-height: 2;
+  color: var(--grey-500);
+}

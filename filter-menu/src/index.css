@@ -1,0 +1,95 @@
+/* Global Reset and Variables */
+*,
+::after,
+::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+}
+
+:root {
+  /* Primary Colors */
+  --primary-100: #fef3c7;
+  --primary-500: #f59e0b;
+  --primary-700: #b45309;
+
+  /* Grey Scale */
+  --grey-50: #f8fafc;
+  --grey-200: #e2e8f0;
+  --grey-400: #94a3b8;
+  --grey-500: #64748b;
+  --grey-900: #0f172a;
+
+  /* Semantic Colors */
+  --white: #fff;
+  --backgroundColor: var(--grey-50);
+  --textColor: var(--grey-900);
+
+  /* Layout */
+  --borderRadius: 0.25rem;
+  --letterSpacing: 1px;
+  --transition: 0.3s ease-in-out all;
+  --max-width: 1120px;
+
+  /* Shadows */
+  --shadow-1: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  --shadow-2: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  background: var(--backgroundColor);
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--textColor);
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5 {
+  margin: 0;
+  font-weight: 400;
+  line-height: 1;
+  text-transform: capitalize;
+  letter-spacing: var(--letterSpacing);
+}
+
+h2 {
+  font-size: 2.441rem;
+}
+
+h5 {
+  font-size: 1.25rem;
+}
+
+/* Utility Classes */
+.img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.btn {
+  cursor: pointer;
+  color: var(--white);
+  background: var(--primary-500);
+  border: transparent;
+  border-radius: var(--borderRadius);
+  letter-spacing: var(--letterSpacing);
+  padding: 0.375rem 0.75rem;
+  box-shadow: var(--shadow-1);
+  transition: var(--transition);
+  text-transform: capitalize;
+  display: inline-block;
+}
+
+.btn:hover {
+  background: var(--primary-700);
+}

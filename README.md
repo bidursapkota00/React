@@ -21,6 +21,7 @@
 13. [useReducer Hook](#usereducer-hook)
 14. [React Router](#react-router)
 15. [Optimizations](#optimizations)
+16. [Fundamental Project1: Filter Menu](#fundamental-project1-filter-menu)
 
 ---
 
@@ -1659,3 +1660,638 @@ export const Parent = () => {
   );
 };
 ```
+
+## Fundamental Project1: Filter Menu
+
+Build a restaurant menu application with category filtering using React, TypeScript, and modular CSS.
+
+**Create Vite Project**
+
+```bash
+npm create vite@latest filter-menu -- --template react-ts
+code filter-menu
+```
+
+**Project Structure**
+
+```text
+filter-menu/
+├── src/
+│   ├── components/
+│   │   ├── Categories.tsx
+│   │   ├── Categories.css
+│   │   ├── Menu.tsx
+│   │   ├── Menu.css
+│   │   ├── MenuItem.tsx
+│   │   ├── MenuItem.css
+│   │   ├── Title.tsx
+│   │   └── Title.css
+│   ├── data/
+│   │   └── menu.ts
+│   ├── types/
+│   │   └── menu.ts
+│   ├── App.tsx
+│   ├── App.css
+│   ├── index.css
+│   └── main.tsx
+├── public/
+│   └── images/
+│       ├── item-1.jpeg
+│       ├── item-2.jpeg
+│       └── ... (item-9.jpeg)
+```
+
+**Add Images to `public/images/`**
+
+Place your menu item images (item-1.jpeg through item-9.jpeg) in the `public/images/` directory.
+
+**Note:** You can use placeholder images from services like Unsplash or Lorem Picsum during development.
+
+---
+
+**Define Types**
+
+**Create `src/types/menu.ts`**
+
+```typescript
+export interface MenuItem {
+  id: number;
+  title: string;
+  category: string;
+  price: number;
+  img: string;
+  desc: string;
+}
+
+export type Category = string;
+```
+
+---
+
+**Create Data File**
+
+**Create `src/data/menu.ts`**
+
+```typescript
+import { type MenuItem } from "../types/menu";
+
+const menu: MenuItem[] = [
+  {
+    id: 1,
+    title: "buttermilk pancakes",
+    category: "breakfast",
+    price: 15.99,
+    img: "/images/item-1.jpeg",
+    desc: `I'm baby woke mlkshk wolf bitters live-edge blue bottle, hammock freegan copper mug whatever cold-pressed I'm baby woke mlkshk wolf bitters live-edge blue bottle, hammock freegan copper mug whatever cold-pressed `,
+  },
+  {
+    id: 2,
+    title: "diner double",
+    category: "lunch",
+    price: 13.99,
+    img: "/images/item-2.jpeg",
+    desc: `vaporware iPhone mumblecore selvage raw denim slow-carb leggings gochujang helvetica man braid jianbing. Marfa thundercats `,
+  },
+  {
+    id: 3,
+    title: "godzilla milkshake",
+    category: "shakes",
+    price: 6.99,
+    img: "/images/item-3.jpeg",
+    desc: `ombucha chillwave fanny pack 3 wolf moon street art photo booth before they sold out organic viral.`,
+  },
+  {
+    id: 4,
+    title: "country delight",
+    category: "breakfast",
+    price: 20.99,
+    img: "/images/item-4.jpeg",
+    desc: `Shabby chic keffiyeh neutra snackwave pork belly shoreditch. Prism austin mlkshk truffaut, `,
+  },
+  {
+    id: 5,
+    title: "egg attack",
+    category: "lunch",
+    price: 22.99,
+    img: "/images/item-5.jpeg",
+    desc: `franzen vegan pabst bicycle rights kickstarter pinterest meditation farm-to-table 90's pop-up `,
+  },
+  {
+    id: 6,
+    title: "oreo dream",
+    category: "shakes",
+    price: 18.99,
+    img: "/images/item-6.jpeg",
+    desc: `Portland chicharrones ethical edison bulb, palo santo craft beer chia heirloom iPhone everyday`,
+  },
+  {
+    id: 7,
+    title: "bacon overflow",
+    category: "breakfast",
+    price: 8.99,
+    img: "/images/item-7.jpeg",
+    desc: `carry jianbing normcore freegan. Viral single-origin coffee live-edge, pork belly cloud bread iceland put a bird `,
+  },
+  {
+    id: 8,
+    title: "american classic",
+    category: "lunch",
+    price: 12.99,
+    img: "/images/item-8.jpeg",
+    desc: `on it tumblr kickstarter thundercats migas everyday carry squid palo santo leggings. Food truck truffaut  `,
+  },
+  {
+    id: 9,
+    title: "quarantine buddy",
+    category: "shakes",
+    price: 16.99,
+    img: "/images/item-9.jpeg",
+    desc: `skateboard fam synth authentic semiotics. Live-edge lyft af, edison bulb yuccie crucifix microdosing.`,
+  },
+];
+
+export default menu;
+```
+
+---
+
+**Setup Global Styles**
+
+**Create `src/index.css`**
+
+```css
+/* Global Reset and Variables */
+*,
+::after,
+::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+}
+
+:root {
+  /* Primary Colors */
+  --primary-100: #fef3c7;
+  --primary-500: #f59e0b;
+  --primary-700: #b45309;
+
+  /* Grey Scale */
+  --grey-50: #f8fafc;
+  --grey-200: #e2e8f0;
+  --grey-400: #94a3b8;
+  --grey-500: #64748b;
+  --grey-900: #0f172a;
+
+  /* Semantic Colors */
+  --white: #fff;
+  --backgroundColor: var(--grey-50);
+  --textColor: var(--grey-900);
+
+  /* Layout */
+  --borderRadius: 0.25rem;
+  --letterSpacing: 1px;
+  --transition: 0.3s ease-in-out all;
+  --max-width: 1120px;
+
+  /* Shadows */
+  --shadow-1: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  --shadow-2: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  background: var(--backgroundColor);
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--textColor);
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5 {
+  margin: 0;
+  font-weight: 400;
+  line-height: 1;
+  text-transform: capitalize;
+  letter-spacing: var(--letterSpacing);
+}
+
+h2 {
+  font-size: 2.441rem;
+}
+
+h5 {
+  font-size: 1.25rem;
+}
+
+/* Utility Classes */
+.img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.btn {
+  cursor: pointer;
+  color: var(--white);
+  background: var(--primary-500);
+  border: transparent;
+  border-radius: var(--borderRadius);
+  letter-spacing: var(--letterSpacing);
+  padding: 0.375rem 0.75rem;
+  box-shadow: var(--shadow-1);
+  transition: var(--transition);
+  text-transform: capitalize;
+  display: inline-block;
+}
+
+.btn:hover {
+  background: var(--primary-700);
+}
+```
+
+---
+
+**Create Title Component**
+
+**Create `src/components/Title.tsx`**
+
+```typescript
+import "./Title.css";
+
+interface TitleProps {
+  text: string;
+}
+
+const Title = ({ text }: TitleProps) => {
+  return (
+    <div className="title">
+      <h2>{text}</h2>
+      <div className="title-underline"></div>
+    </div>
+  );
+};
+
+export default Title;
+```
+
+**Create `src/components/Title.css`**
+
+```css
+.title {
+  text-align: center;
+}
+
+.title-underline {
+  background: var(--primary-500);
+  width: 7rem;
+  height: 0.25rem;
+  margin: 0 auto;
+  margin-top: 1rem;
+}
+```
+
+**Create Main App Component**
+
+**Create `src/App.tsx`**
+
+```typescript
+import Title from "./components/Title";
+import "./App.css";
+
+function App() {
+  return (
+    <main>
+      <section className="menu">
+        <Title text="our menu" />
+      </section>
+    </main>
+  );
+}
+
+export default App;
+```
+
+**Create `src/App.css`**
+
+```css
+.menu {
+  padding: 5rem 0;
+}
+```
+
+**Output**
+
+!["Output with Title"](/filter-menu/screenshots/filter-op1.png)
+
+---
+
+**Create MenuItem Component**
+
+Each menu item shows an image, title, price badge, and description.
+
+**Create `src/components/MenuItem.tsx`**
+
+```typescript
+import "./MenuItem.css";
+
+interface MenuItemProps {
+  img: string;
+  title: string;
+  price: number;
+  desc: string;
+}
+
+const MenuItem = ({ img, title, price, desc }: MenuItemProps) => {
+  return (
+    <article className="menu-item">
+      <img src={img} alt={title} className="img" />
+      <div className="item-info">
+        <header>
+          <h5>{title}</h5>
+          <span className="item-price">${price}</span>
+        </header>
+        <p className="item-text">{desc}</p>
+      </div>
+    </article>
+  );
+};
+
+export default MenuItem;
+```
+
+**Create `src/components/MenuItem.css`**
+
+```css
+.menu-item {
+  background: var(--white);
+  border-radius: var(--borderRadius);
+  max-width: 25rem;
+}
+
+.menu-item .img {
+  height: 15rem;
+  border-top-right-radius: var(--borderRadius);
+  border-top-left-radius: var(--borderRadius);
+}
+
+.item-info {
+  padding: 1.5rem;
+}
+
+.item-info header {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.item-info h5 {
+  font-weight: 500;
+}
+
+.item-price {
+  background: var(--primary-500);
+  color: var(--white);
+  padding: 0.25rem 0.5rem;
+  letter-spacing: var(--letterSpacing);
+  border-radius: var(--borderRadius);
+}
+
+.item-text {
+  line-height: 2;
+  color: var(--grey-500);
+}
+```
+
+**Create Menu Component**
+
+The Menu component renders a responsive grid of menu items that adapts from 1 to 3 columns based on screen size.
+
+**Create `src/components/Menu.tsx`**
+
+```typescript
+import { type MenuItem as MenuItemType } from "../types/menu";
+import MenuItem from "./MenuItem";
+import "./Menu.css";
+
+interface MenuProps {
+  items: MenuItemType[];
+}
+
+const Menu = ({ items }: MenuProps) => {
+  return (
+    <div className="section-center">
+      {items.map((menuItem) => {
+        return <MenuItem key={menuItem.id} {...menuItem} />;
+      })}
+    </div>
+  );
+};
+
+export default Menu;
+```
+
+**Create `src/components/Menu.css`**
+
+```css
+.section-center {
+  width: 90vw;
+  margin: 0 auto;
+  max-width: var(--max-width);
+  display: grid;
+  gap: 2rem;
+  justify-items: center;
+}
+
+@media screen and (min-width: 992px) {
+  .section-center {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+@media screen and (min-width: 1170px) {
+  .section-center {
+    width: 95vw;
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+```
+
+**Update Main App Component to add Menu**
+
+**Update `src/App.tsx`**
+
+```ts
+import Title from "./components/Title";
+import items from "./data/menu";
+import "./App.css";
+import Menu from "./components/Menu";
+
+function App() {
+  return (
+    <main>
+      <section className="menu">
+        <Title text="our menu" />
+        <Menu items={items} />
+      </section>
+    </main>
+  );
+}
+
+export default App;
+```
+
+**Output**
+
+!["Output with Title"](/filter-menu/screenshots/filter-op2.png)
+
+---
+
+**Create Categories Component**
+
+Categories renders filter buttons that trigger the filterItems function when clicked.
+
+**Create `src/components/Categories.tsx`**
+
+```typescript
+import { type Category } from "../types/menu";
+import "./Categories.css";
+
+interface CategoriesProps {
+  categories: Category[];
+  filterItems: (category: Category) => void;
+}
+
+const Categories = ({ categories, filterItems }: CategoriesProps) => {
+  return (
+    <div className="btn-container">
+      {categories.map((category) => {
+        return (
+          <button
+            type="button"
+            className="btn"
+            key={category}
+            onClick={() => filterItems(category)}
+          >
+            {category}
+          </button>
+        );
+      })}
+    </div>
+  );
+};
+
+export default Categories;
+```
+
+**Create `src/components/Categories.css`**
+
+```css
+.btn-container {
+  margin: 2rem 0 4rem 0;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+```
+
+**Update Main App Component to Filter Buttons**
+
+`allCategories`: Creates unique list of categories with `all` option
+
+**Update `src/App.tsx`**
+
+```ts
+import Title from "./components/Title";
+import items from "./data/menu";
+import "./App.css";
+import Menu from "./components/Menu";
+import Categories from "./components/Categories";
+
+const allCategories = ["all", ...new Set(items.map((item) => item.category))];
+
+function App() {
+  return (
+    <main>
+      <section className="menu">
+        <Title text="our menu" />
+        <Categories categories={allCategories} filterItems={() => {}} />
+        <Menu items={items} />
+      </section>
+    </main>
+  );
+}
+
+export default App;
+```
+
+**Output**
+
+!["Output with Title"](/filter-menu/screenshots/filter-op3.png)
+
+---
+
+**Update Main App Component to implement Filter feature**
+
+- `menuItems` state: Tracks currently displayed items
+- `filterItems`: Filters menu based on selected category
+
+**Update `src/App.tsx`**
+
+```typescript
+import { useState } from "react";
+import Title from "./components/Title";
+import items from "./data/menu";
+import "./App.css";
+import Menu from "./components/Menu";
+import Categories from "./components/Categories";
+
+const allCategories = ["all", ...new Set(items.map((item) => item.category))];
+
+function App() {
+  const [menuItems, setMenuItems] = useState(items);
+
+  const filterItems = (category: string) => {
+    if (category === "all") {
+      setMenuItems(items);
+      return;
+    }
+    const newItems = items.filter((item) => item.category === category);
+    setMenuItems(newItems);
+  };
+  return (
+    <main>
+      <section className="menu">
+        <Title text="our menu" />
+        <Categories categories={allCategories} filterItems={filterItems} />
+        <Menu items={menuItems} />
+      </section>
+    </main>
+  );
+}
+
+export default App;
+```
+
+!["Output with Title"](/filter-menu/screenshots/filter-op4.png)
+
+---
+
+**Run the Project**
+
+```bash
+npm run dev
+```
+
+Visit `http://localhost:5173` to see your menu in action.
