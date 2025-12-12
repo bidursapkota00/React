@@ -21,7 +21,8 @@
 13. [useReducer Hook](#usereducer-hook)
 14. [React Router](#react-router)
 15. [Optimizations](#optimizations)
-16. [Fundamental Project1: Filter Menu](#fundamental-project1-filter-menu)
+16. [Basic Project1: Filter Menu](#basic-project1-filter-menu)
+17. [Basic Project2: Carousel](#basic-project2-carousel)
 
 ---
 
@@ -1661,7 +1662,7 @@ export const Parent = () => {
 };
 ```
 
-## Fundamental Project1: Filter Menu
+## Basic Project1: Filter Menu
 
 Build a restaurant menu application with category filtering using React, TypeScript, and modular CSS.
 
@@ -1989,7 +1990,7 @@ export default App;
 
 **Output**
 
-!["Output with Title"](/filter-menu/screenshots/filter-op1.png)
+![Output with Title](/filter-menu/screenshots/filter-op1.png)
 
 ---
 
@@ -2153,7 +2154,7 @@ export default App;
 
 **Output**
 
-!["Output with Title"](/filter-menu/screenshots/filter-op2.png)
+![Output with Menus](/filter-menu/screenshots/filter-op2.png)
 
 ---
 
@@ -2238,7 +2239,7 @@ export default App;
 
 **Output**
 
-!["Output with Title"](/filter-menu/screenshots/filter-op3.png)
+![Output with Filter Button](/filter-menu/screenshots/filter-op3.png)
 
 ---
 
@@ -2284,7 +2285,489 @@ function App() {
 export default App;
 ```
 
-!["Output with Title"](/filter-menu/screenshots/filter-op4.png)
+![Output with Filter Functionality](/filter-menu/screenshots/filter-op4.png)
+
+---
+
+**Run the Project**
+
+```bash
+npm run dev
+```
+
+Visit `http://localhost:5173` to see your menu in action.
+
+---
+
+---
+
+---
+
+## Basic Project2: Carousel
+
+Build a testimonial carousel/slider with automatic rotation, manual navigation, and smooth transitions using React and TypeScript.
+
+**Create Vite Project**
+
+```bash
+npm create vite@latest carousel-slider -- --template react-ts
+code carousel-slider
+npm install react-icons
+```
+
+**Project Structure**
+
+```text
+carousel-slider/
+├── src/
+│   ├── components/
+│   │   ├── Carousel.tsx
+│   │   └── Carousel.css
+│   ├── data/
+│   │   └── people.ts
+│   ├── types/
+│   │   └── person.ts
+│   ├── App.tsx
+│   ├── App.css
+│   ├── index.css
+│   └── main.tsx
+├── public/
+│   └── images/
+│       ├── person-1.jpeg
+│       ├── person-2.jpeg
+│       ├── person-3.jpeg
+│       └── person-4.jpeg
+```
+
+**Add Images to `public/images/`**
+
+Place your menu person images (person-1.jpeg through person-4.jpeg) in the `public/images/` directory.
+
+**Note:** You can use placeholder images from services like Unsplash or Lorem Picsum during development.
+
+---
+
+**Define Types**
+
+**Create `src/types/person.ts`**
+
+```typescript
+export interface Person {
+  id: number;
+  image: string;
+  name: string;
+  title: string;
+  quote: string;
+}
+```
+
+**Create Data File**
+
+**Create `src/data/people.ts`**
+
+```typescript
+import { type Person } from "../types/person";
+
+export const list: Person[] = [
+  {
+    id: 1,
+    image: "/images/person-1.jpeg",
+    name: "maria ferguson",
+    title: "office manager",
+    quote:
+      "Fingerstache umami squid, kinfolk subway tile selvage tumblr man braid viral kombucha gentrify fanny pack raclette pok pok mustache.",
+  },
+  {
+    id: 2,
+    image: "/images/person-2.jpeg",
+    name: "john doe",
+    title: "regular guy",
+    quote:
+      "Gastropub sustainable tousled prism occupy. Viral XOXO roof party brunch actually, chambray listicle microdosing put a bird on it paleo subway tile squid umami.",
+  },
+  {
+    id: 3,
+    image: "/images/person-3.jpeg",
+    name: "peter smith",
+    title: "product designer",
+    quote:
+      "Drinking vinegar polaroid street art echo park, actually semiotics next level butcher master cleanse hammock flexitarian ethical paleo.",
+  },
+  {
+    id: 4,
+    image: "/images/person-4.jpeg",
+    name: "susan andersen",
+    title: "the boss",
+    quote:
+      "Marfa af yr 3 wolf moon kogi, readymade distillery asymmetrical seitan kale chips fingerstache cloud bread mustache twee messenger bag.",
+  },
+];
+```
+
+---
+
+**Setup Global Styles**
+
+**Create `src/index.css`**
+
+```css
+*,
+::after,
+::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+}
+
+:root {
+  /* Primary Colors - Purple Theme */
+  --primary-100: #ede9fe;
+  --primary-200: #ddd6fe;
+  --primary-300: #c4b5fd;
+  --primary-400: #a78bfa;
+  --primary-500: #8b5cf6;
+  --primary-600: #7c3aed;
+  --primary-700: #6d28d9;
+  --primary-800: #5b21b6;
+  --primary-900: #4c1d95;
+
+  /* Grey Scale */
+  --grey-50: #f8fafc;
+  --grey-100: #f1f5f9;
+  --grey-200: #e2e8f0;
+  --grey-300: #cbd5e1;
+  --grey-400: #94a3b8;
+  --grey-500: #64748b;
+  --grey-600: #475569;
+  --grey-700: #334155;
+  --grey-800: #1e293b;
+  --grey-900: #0f172a;
+
+  /* Semantic Colors */
+  --black: #222;
+  --white: #fff;
+  --red-light: #f8d7da;
+  --red-dark: #842029;
+  --green-light: #d1e7dd;
+  --green-dark: #0f5132;
+
+  /* Typography */
+  --small-text: 0.875rem;
+  --extra-small-text: 0.7em;
+
+  /* Layout */
+  --backgroundColor: var(--grey-50);
+  --textColor: var(--grey-900);
+  --borderRadius: 0.25rem;
+  --letterSpacing: 1px;
+  --transition: 0.3s ease-in-out all;
+  --max-width: 1120px;
+  --fixed-width: 600px;
+
+  /* Shadows */
+  --shadow-1: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-2: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-3: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-4: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+body {
+  background: var(--backgroundColor);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--textColor);
+}
+
+p {
+  margin: 0;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5 {
+  margin: 0;
+  font-weight: 400;
+  line-height: 1;
+  text-transform: capitalize;
+  letter-spacing: var(--letterSpacing);
+}
+
+h1 {
+  font-size: 3.052rem;
+}
+
+h2 {
+  font-size: 2.441rem;
+}
+
+h3 {
+  font-size: 1.953rem;
+}
+
+h4 {
+  font-size: 1.563rem;
+}
+
+h5 {
+  font-size: 1.25rem;
+}
+
+.text {
+  margin-bottom: 1.5rem;
+  max-width: 40em;
+}
+
+small,
+.text-small {
+  font-size: var(--small-text);
+}
+
+/* Utility Classes */
+a {
+  text-decoration: none;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+```
+
+---
+
+**Create Carousel Component**
+
+- `people`: Stores the array of testimonials
+- `currentPerson`: Tracks which slide is currently visible (index)
+- `prevSlide()`: Calculates previous index using modulo for circular navigation
+- `nextSlide()`: Calculates next index using modulo for circular navigation
+
+**Create `src/components/Carousel.tsx`**
+
+```typescript
+import { useEffect, useState } from "react";
+import { list as people } from "../data/people";
+import { FaQuoteRight } from "react-icons/fa";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import "./Carousel.css";
+
+const Carousel = () => {
+  const [currentPerson, setCurrentPerson] = useState(0);
+
+  const prevSlide = () => {
+    setCurrentPerson((oldPerson) => {
+      const result = (oldPerson - 1 + people.length) % people.length;
+      return result;
+    });
+  };
+
+  const nextSlide = () => {
+    setCurrentPerson((oldPerson) => {
+      const result = (oldPerson + 1) % people.length;
+      return result;
+    });
+  };
+
+  useEffect(() => {
+    const sliderId = setInterval(() => {
+      nextSlide();
+    }, 5000);
+
+    return () => {
+      clearInterval(sliderId);
+    };
+  }, [currentPerson]);
+  // Re-run when currentPerson changes
+  // Ensures the interval is reset after each slide change
+  // Prevents memory leaks by cleaning up old intervals
+  // User clicks won't interfere with auto-play timing
+
+  return (
+    <section className="slider-container">
+      {people.map((person, personIndex) => {
+        const { id, image, name, title, quote } = person;
+
+        return (
+          <article
+            className="slide"
+            style={{
+              transform: `translateX(${100 * (personIndex - currentPerson)}%)`,
+            }}
+            key={id}
+          >
+            <img src={image} alt={name} className="person-img" />
+            <h5 className="name">{name}</h5>
+            <p className="title">{title}</p>
+            <p className="text">{quote}</p>
+            <FaQuoteRight className="icon" />
+          </article>
+        );
+      })}
+
+      <button type="button" className="prev" onClick={prevSlide}>
+        <FiChevronLeft />
+      </button>
+      <button type="button" className="next" onClick={nextSlide}>
+        <FiChevronRight />
+      </button>
+    </section>
+  );
+};
+
+export default Carousel;
+```
+
+**Animation Concept**
+
+- `transform`: Positions each slide horizontally
+  - Current slide: `translateX(0%)` (visible)
+  - Next slide: `translateX(100%)` (off-screen right)
+  - Previous slide: `translateX(-100%)` (off-screen left)
+- `opacity`: Fades out non-active slides
+- `visibility`: Removes hidden slides from accessibility tree
+
+**Create `src/components/Carousel.css`**
+
+```css
+.slider-container {
+  margin: 0 auto;
+  margin-top: 10rem;
+  width: 80vw;
+  max-width: 800px;
+  position: relative;
+  height: 450px;
+  overflow: hidden;
+}
+
+.slide {
+  text-align: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: var(--transition);
+}
+
+.person-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  object-fit: cover;
+  border: 4px solid var(--primary-200);
+  box-shadow: var(--shadow-3);
+}
+
+.name {
+  text-transform: uppercase;
+  color: var(--primary-500);
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  text-transform: capitalize;
+  color: var(--grey-700);
+  margin-bottom: 0.75rem;
+}
+
+.text {
+  max-width: 35em;
+  margin: 0 auto;
+  margin-top: 2rem;
+  line-height: 2;
+  color: var(--grey-500);
+}
+
+.icon {
+  font-size: 3rem;
+  margin-top: 1rem;
+  color: var(--primary-500);
+}
+
+.prev,
+.next {
+  position: absolute;
+  top: 200px;
+  background: var(--grey-500);
+  color: var(--white);
+  width: 1.25rem;
+  height: 1.25rem;
+  display: grid;
+  place-items: center;
+  border-color: transparent;
+  border-radius: var(--borderRadius);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.prev:hover,
+.next:hover {
+  background: var(--primary-500);
+}
+
+.prev {
+  left: 0;
+}
+
+.next {
+  right: 0;
+}
+
+@media screen and (min-width: 800px) {
+  .text {
+    max-width: 45em;
+  }
+
+  .prev,
+  .next {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.5rem;
+  }
+}
+```
+
+**Create App Component**
+
+**Create `src/App.tsx`**
+
+```typescript
+import Carousel from "./components/Carousel";
+import "./App.css";
+
+const App = () => {
+  return (
+    <main>
+      <Carousel />
+    </main>
+  );
+};
+
+export default App;
+```
+
+**Create `src/App.css`**
+
+```css
+main {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+```
+
+![Output with Filter Functionality](/carousel-slider/public/screenshots/slider.png)
 
 ---
 
