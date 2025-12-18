@@ -2778,3 +2778,1060 @@ npm run dev
 ```
 
 Visit `http://localhost:5173` to see your menu in action.
+
+---
+
+---
+
+---
+
+## Basic Project3: Grocery Bud
+
+Build a Gorcery list app.
+
+**Create Vite Project**
+
+```bash
+npm create vite@latest grocery-bud -- --template react-ts
+code grocery-bud
+```
+
+**Project Structure**
+
+```text
+grocery-bud/
+├── src/
+│   ├── components/
+│   │   ├── Form.tsx
+│   │   ├── Form.css
+│   │   ├── Items.tsx
+│   │   ├── Items.css
+│   │   ├── SingleItem.tsx
+│   │   └── SingleItem.css
+│   ├── data/
+│   │   └── groceryItems.ts
+│   ├── types/
+│   │   └── groceryItem.ts
+│   ├── App.tsx
+│   ├── App.css
+│   ├── index.css
+│   └── main.tsx
+```
+
+---
+
+**Define Types**
+
+**Create `src/types/groceryItem.ts`**
+
+```typescript
+export interface GroceryItem {
+  id: string;
+  name: string;
+  completed: boolean;
+}
+```
+
+---
+
+**Create Data File**
+
+**Create `src/data/groceryItems.ts`**
+
+```typescript
+import { type GroceryItem } from "../types/groceryItem";
+
+export const groceryItems: GroceryItem[] = [
+  { id: "1", name: "milk", completed: true },
+  { id: "2", name: "bread", completed: true },
+  { id: "3", name: "eggs", completed: false },
+  { id: "4", name: "butter", completed: false },
+];
+```
+
+---
+
+**Setup Global Styles**
+
+**Create `src/index.css`**
+
+```css
+*,
+::after,
+::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+} /*16px*/
+
+:root {
+  /* colors */
+  --primary-100: #e2e0ff;
+  --primary-200: #a5f3fc;
+  --primary-300: #67e8f9;
+  --primary-400: #22d3ee;
+  --primary-500: #06b6d4;
+  --primary-600: #0891b2;
+  --primary-700: #0e7490;
+  --primary-800: #155e75;
+  --primary-900: #164e63;
+
+  /* grey */
+  --grey-50: #f8fafc;
+  --grey-100: #f1f5f9;
+  --grey-200: #e2e8f0;
+  --grey-300: #cbd5e1;
+  --grey-400: #94a3b8;
+  --grey-500: #64748b;
+  --grey-600: #475569;
+  --grey-700: #334155;
+  --grey-800: #1e293b;
+  --grey-900: #0f172a;
+  /* rest of the colors */
+  --black: #222;
+  --white: #fff;
+  --red-light: #f8d7da;
+  --red-dark: #842029;
+  --green-light: #d1e7dd;
+  --green-dark: #0f5132;
+
+  --small-text: 0.875rem;
+  --extra-small-text: 0.7em;
+  /* rest of the vars */
+  --backgroundColor: var(--grey-50);
+  --textColor: var(--grey-900);
+  --borderRadius: 0.25rem;
+  --letterSpacing: 1px;
+  --transition: 0.3s ease-in-out all;
+  --max-width: 1120px;
+  --fixed-width: 600px;
+
+  /* box shadow*/
+  --shadow-1: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-2: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-3: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-4: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+body {
+  background: var(--backgroundColor);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--textColor);
+}
+p {
+  margin: 0;
+}
+h1,
+h2,
+h3,
+h4,
+h5 {
+  margin: 0;
+  font-family: var(--headingFont);
+  font-weight: 400;
+  line-height: 1;
+  text-transform: capitalize;
+  letter-spacing: var(--letterSpacing);
+}
+
+h1 {
+  font-size: 3.052rem;
+}
+
+h2 {
+  font-size: 2.441rem;
+}
+
+h3 {
+  font-size: 1.953rem;
+}
+
+h4 {
+  font-size: 1.563rem;
+}
+
+h5 {
+  font-size: 1.25rem;
+}
+
+.text {
+  margin-bottom: 1.5rem;
+  max-width: 40em;
+}
+
+small,
+.text-small {
+  font-size: var(--small-text);
+}
+
+a {
+  text-decoration: none;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}
+/* buttons */
+
+.btn {
+  cursor: pointer;
+  color: var(--white);
+  background: var(--primary-500);
+  border: transparent;
+  border-radius: var(--borderRadius);
+  letter-spacing: var(--letterSpacing);
+  padding: 0.375rem 0.75rem;
+  box-shadow: var(--shadow-1);
+  transition: var(--transition);
+  text-transform: capitalize;
+  display: inline-block;
+}
+.btn:hover {
+  background: var(--primary-700);
+  box-shadow: var(--shadow-3);
+}
+.btn-hipster {
+  color: var(--primary-500);
+  background: var(--primary-200);
+}
+.btn-hipster:hover {
+  color: var(--primary-200);
+  background: var(--primary-700);
+}
+.btn-block {
+  width: 100%;
+}
+
+/* alerts */
+.alert {
+  padding: 0.375rem 0.75rem;
+  margin-bottom: 1rem;
+  border-color: transparent;
+  border-radius: var(--borderRadius);
+}
+
+.alert-danger {
+  color: var(--red-dark);
+  background: var(--red-light);
+}
+.alert-success {
+  color: var(--green-dark);
+  background: var(--green-light);
+}
+/* form */
+
+.form {
+  width: 90vw;
+  max-width: var(--fixed-width);
+  background: var(--white);
+  border-radius: var(--borderRadius);
+  box-shadow: var(--shadow-2);
+  padding: 2rem 2.5rem;
+  margin: 3rem auto;
+}
+.form-label {
+  display: block;
+  font-size: var(--small-text);
+  margin-bottom: 0.5rem;
+  text-transform: capitalize;
+  letter-spacing: var(--letterSpacing);
+}
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--borderRadius);
+  background: var(--backgroundColor);
+  border: 1px solid var(--grey-200);
+}
+
+.form-row {
+  margin-bottom: 1rem;
+}
+
+.form-textarea {
+  height: 7rem;
+}
+::placeholder {
+  font-family: inherit;
+  color: var(--grey-400);
+}
+.form-alert {
+  color: var(--red-dark);
+  letter-spacing: var(--letterSpacing);
+  text-transform: capitalize;
+}
+/* alert */
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading {
+  width: 6rem;
+  height: 6rem;
+  border: 5px solid var(--grey-400);
+  border-radius: 50%;
+  border-top-color: var(--primary-500);
+  animation: spinner 0.6s linear infinite;
+  margin: 0 auto;
+}
+
+/* title */
+
+.title {
+  text-align: center;
+}
+
+.title-underline {
+  background: var(--primary-500);
+  width: 7rem;
+  height: 0.25rem;
+  margin: 0 auto;
+  margin-top: 1rem;
+}
+/* ============= PROJECT CSS =============== */
+
+.section-center {
+  width: 90vw;
+  margin: 0 auto;
+  margin-top: 8rem;
+  max-width: 30rem;
+  background: var(--white);
+  border-radius: var(--borderRadius);
+  padding: 2rem;
+  box-shadow: var(--shadow-1);
+  transition: var(--transition);
+}
+.section-center:hover {
+  box-shadow: var(--shadow-3);
+}
+
+form h4 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.form-control {
+  display: grid;
+  grid-template-columns: 1fr 100px;
+  gap: 1rem;
+}
+.form-input {
+  border-radius: 0;
+  border-top-left-radius: var(--borderRadius);
+  border-bottom-left-radius: var(--borderRadius);
+}
+.form-control .btn {
+  border-radius: 0;
+  border-top-right-radius: var(--borderRadius);
+  border-bottom-right-radius: var(--borderRadius);
+}
+
+.items {
+  margin-top: 2rem;
+  display: grid;
+  row-gap: 1rem;
+}
+.single-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  column-gap: 1rem;
+  align-items: center;
+}
+.single-item p {
+  letter-spacing: var(--letterSpacing);
+}
+
+.remove-btn {
+  padding: 0.15rem 0.25rem;
+  font-size: 0.75rem;
+  background: var(--black);
+}
+
+.Toastify__toast {
+  text-transform: capitalize;
+}
+```
+
+---
+
+**Create SingleItem Component**
+
+**Create `src/components/SingleItem.tsx`**
+
+```typescript
+import { type GroceryItem } from "../types/groceryItem";
+import { FiEdit, FiTrash2 } from "react-icons/fi";
+
+interface SingleItemProps {
+  item: GroceryItem;
+}
+
+const SingleItem = ({ item }: SingleItemProps) => {
+  return (
+    <div className="single-item">
+      <input type="checkbox" checked={item.completed} onChange={() => null} />
+      <p
+        style={{
+          textTransform: "capitalize",
+          textDecoration: item.completed ? "line-through" : "none",
+        }}
+      >
+        {item.name}
+      </p>
+
+      <button
+        className="btn icon-btn"
+        type="button"
+        onClick={() => null}
+        disabled={false}
+      >
+        <FiEdit size={18} />
+      </button>
+
+      <button
+        className="btn icon-btn remove-btn"
+        type="button"
+        onClick={() => null}
+      >
+        <FiTrash2 size={18} />
+      </button>
+    </div>
+  );
+};
+
+export default SingleItem;
+```
+
+**Create `src/components/SingleItem.css`**
+
+```css
+
+```
+
+---
+
+**Create Items Component**
+
+**Create `src/components/Items.tsx`**
+
+```typescript
+import SingleItem from "./SingleItemCopy";
+import { type GroceryItem } from "../types/groceryItem";
+
+interface ItemsProps {
+  items: GroceryItem[];
+}
+
+const Items = ({ items }: ItemsProps) => {
+  return (
+    <div className="items">
+      {items.map((item) => {
+        return <SingleItem key={item.id} item={item} />;
+      })}
+    </div>
+  );
+};
+
+export default Items;
+```
+
+**Create `src/components/Items.css`**
+
+```css
+
+```
+
+---
+
+**Create Main App Component**
+
+**Create `src/App.tsx`**
+
+```typescript
+import Items from "./components/ItemsCopy";
+import { groceryItems } from "./data/groceryItems";
+
+const App = () => {
+  return (
+    <section className="section-center">
+      <Items items={groceryItems} />
+    </section>
+  );
+};
+
+export default App;
+```
+
+**Create `src/App.css`**
+
+```css
+
+```
+
+**Output**
+
+![Grocery List Output](/grocery-bud/screenshots/grocery-op1.png)
+
+---
+
+**ADD Edit Completed Feature**
+
+**Update `src/App.tsx`**
+
+```typescript
+import Items from "./components/Items";
+import { groceryItems } from "./data/groceryItems";
+import { useState } from "react";
+import { type GroceryItem } from "./types/groceryItem";
+
+const App = () => {
+  const [items, setItems] = useState<GroceryItem[]>(groceryItems);
+
+  const editCompleted = (itemId: string) => {
+    const newItems = items.map((item) => {
+      if (item.id === itemId) {
+        return { ...item, completed: !item.completed };
+      }
+      return item;
+    });
+    setItems(newItems);
+  };
+
+  return (
+    <section className="section-center">
+      <Items items={items} editCompleted={editCompleted} />
+    </section>
+  );
+};
+
+export default App;
+```
+
+---
+
+**Update `src/components/Items.tsx`**
+
+```typescript
+import SingleItem from "./SingleItem";
+import { type GroceryItem } from "../types/groceryItem";
+
+interface ItemsProps {
+  items: GroceryItem[];
+  editCompleted: (itemId: string) => void;
+}
+
+const Items = ({ items, editCompleted }: ItemsProps) => {
+  return (
+    <div className="items">
+      {items.map((item) => {
+        return (
+          <SingleItem key={item.id} item={item} editCompleted={editCompleted} />
+        );
+      })}
+    </div>
+  );
+};
+
+export default Items;
+```
+
+---
+
+**Update `src/components/SingleItem.tsx`**
+
+```typescript
+// ...
+interface SingleItemProps {
+  item: GroceryItem;
+  editCompleted: (itemId: string) => void;
+}
+
+const SingleItem = ({ item, editCompleted }: SingleItemProps) => {
+  return (
+    <div className="single-item">
+      <input
+        type="checkbox"
+        checked={item.completed}
+        onChange={() => editCompleted(item.id)}
+      />
+      // ....
+    </div>
+  );
+};
+
+export default SingleItem;
+```
+
+**Output**
+
+![Grocery List Output with Edit](/grocery-bud/screenshots/grocery-op2.png)
+
+---
+
+**ADD Delete Feature**
+
+**Update `src/App.tsx`**
+
+```typescript
+// ...
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const App = () => {
+  const [items, setItems] = useState<GroceryItem[]>(groceryItems);
+
+  // ...
+
+  const removeItem = (itemId: string) => {
+    const newItems = items.filter((item) => item.id !== itemId);
+    setItems(newItems);
+    toast.success("item deleted");
+  };
+
+  return (
+    <section className="section-center">
+      <ToastContainer position="top-center" />
+      <Items
+        items={items}
+        editCompleted={editCompleted}
+        removeItem={removeItem}
+      />
+    </section>
+  );
+};
+
+export default App;
+```
+
+---
+
+**Update `src/components/Items.tsx`**
+
+```typescript
+import SingleItem from "./SingleItem";
+import { type GroceryItem } from "../types/groceryItem";
+
+interface ItemsProps {
+  items: GroceryItem[];
+  editCompleted: (itemId: string) => void;
+  removeItem: (itemId: string) => void;
+}
+
+const Items = ({ items, editCompleted, removeItem }: ItemsProps) => {
+  return (
+    <div className="items">
+      {items.map((item) => {
+        return (
+          <SingleItem
+            key={item.id}
+            item={item}
+            editCompleted={editCompleted}
+            removeItem={removeItem}
+          />
+        );
+      })}
+    </div>
+  );
+};
+
+export default Items;
+```
+
+---
+
+**Update `src/components/SingleItem.tsx`**
+
+```typescript
+// ...
+interface SingleItemProps {
+  item: GroceryItem;
+  editCompleted: (itemId: string) => void;
+  removeItem: (itemId: string) => void;
+}
+
+const SingleItem = ({ item, editCompleted, removeItem }: SingleItemProps) => {
+  return (
+    <div className="single-item">
+      // ....
+      <button
+        className="btn icon-btn remove-btn"
+        type="button"
+        onClick={() => removeItem(item.id)}
+      >
+        <FiTrash2 size={18} />
+      </button>
+    </div>
+  );
+};
+
+export default SingleItem;
+```
+
+**Output**
+
+![Grocery List Output with Edit](/grocery-bud/screenshots/grocery-op3.png)
+
+---
+
+**Create Form Component to add new grocery item**
+
+**Create `src/components/Form.tsx`**
+
+```typescript
+import { useState, type FormEvent } from "react";
+import { toast } from "react-toastify";
+
+interface FormProps {
+  addItem: (itemName: string) => void;
+}
+
+const Form = ({ addItem }: FormProps) => {
+  const [newItemName, setNewItemName] = useState("");
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!newItemName) {
+      toast.error("please provide value");
+      return;
+    }
+    addItem(newItemName);
+    setNewItemName("");
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <h4>grocery bud</h4>
+      <div className="form-control">
+        <input
+          type="text"
+          className="form-input"
+          value={newItemName}
+          onChange={(event) => setNewItemName(event.target.value)}
+        />
+        <button type="submit" className="btn">
+          add item
+        </button>
+      </div>
+    </form>
+  );
+};
+
+export default Form;
+```
+
+**Create `src/components/Form.css`**
+
+```css
+
+```
+
+---
+
+**Update Main App Component to add Grocery**
+
+**Update `src/App.tsx`**
+
+```ts
+//...
+import { nanoid } from "nanoid";
+import Form from "./components/FormCopy";
+
+const App = () => {
+  const [items, setItems] = useState<GroceryItem[]>(groceryItems);
+
+  const addItem = (itemName: string) => {
+    const newItem: GroceryItem = {
+      name: itemName,
+      completed: false,
+      id: nanoid(),
+    };
+    const newItems = [...items, newItem];
+    setItems(newItems);
+    toast.success("grocery item added");
+  };
+
+  //...
+
+  return (
+    <section className="section-center">
+      <ToastContainer position="top-center" />
+      <Form addItem={addItem} />
+      <Items
+        items={items}
+        editCompleted={editCompleted}
+        removeItem={removeItem}
+      />
+    </section>
+  );
+};
+
+export default App;
+```
+
+**Output**
+
+![Output with Menus](/grocery-bud/screenshots/grocery-op4.png)
+
+---
+
+**ADD Edit Grocery Name Feature**
+
+**Update `src/App.tsx`**
+
+```typescript
+//...
+
+const App = () => {
+  const [items, setItems] = useState<GroceryItem[]>(groceryItems);
+  const [editId, setEditId] = useState<string | null>(null);
+
+  const editItemName = (newName: string) => {
+    const newItems = items.map((item) => {
+      if (item.id === editId) {
+        return { ...item, name: newName };
+      }
+      return item;
+    });
+    setItems(newItems);
+    setEditId(null);
+    toast.success("item updated");
+  };
+
+  return (
+    <section className="section-center">
+      <ToastContainer position="top-center" />
+      <Form
+        addItem={addItem}
+        updateItemName={updateItemName}
+        editItemId={editId}
+        itemToEdit={items.find((item) => item.id === editId)}
+      />
+      <Items
+        items={items}
+        editCompleted={editCompleted}
+        removeItem={removeItem}
+        setEditId={setEditId}
+      />
+    </section>
+  );
+};
+
+export default App;
+```
+
+**Update `src/components/Form.tsx`**
+
+```typescript
+import { useState, type FormEvent, useEffect } from "react";
+import { toast } from "react-toastify";
+import { type GroceryItem } from "../types/groceryItem";
+
+interface FormProps {
+  addItem: (itemName: string) => void;
+  editId: string | null;
+  updateItem: (itemName: string) => void;
+  itemToEdit?: GroceryItem;
+}
+
+const Form = ({
+  addItem,
+  editItemId,
+  updateItemName,
+  itemToEdit,
+}: FormProps) => {
+  const [newItemName, setNewItemName] = useState("");
+
+  useEffect(() => {
+    if (itemToEdit) {
+      setNewItemName(itemToEdit.name);
+    } else {
+      setNewItemName("");
+    }
+  }, [itemToEdit]);
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!newItemName) {
+      toast.error("please provide value");
+      return;
+    }
+    if (editItemId) {
+      updateItemName(newItemName);
+    } else {
+      addItem(newItemName);
+    }
+    setNewItemName("");
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <h4>grocery bud</h4>
+      <div className="form-control">
+        <input
+          type="text"
+          className="form-input"
+          value={newItemName}
+          onChange={(event) => setNewItemName(event.target.value)}
+        />
+        <button type="submit" className="btn">
+          {editItemId ? "edit item" : "add item"}
+        </button>
+      </div>
+    </form>
+  );
+};
+
+export default Form;
+```
+
+**Update `src/components/Items.tsx`**
+
+```typescript
+import SingleItem from "./SingleItem";
+import { type GroceryItem } from "../types/groceryItem";
+
+interface ItemsProps {
+  items: GroceryItem[];
+  editCompleted: (itemId: string) => void;
+  removeItem: (itemId: string) => void;
+  setEditId: (itemId: string) => void;
+}
+
+const Items = ({ items, editCompleted, removeItem, setEditId }: ItemsProps) => {
+  return (
+    <div className="items">
+      {items.map((item) => {
+        return (
+          <SingleItem
+            key={item.id}
+            item={item}
+            editCompleted={editCompleted}
+            removeItem={removeItem}
+            setEditId={setEditId}
+          />
+        );
+      })}
+    </div>
+  );
+};
+
+export default Items;
+```
+
+**Update `src/components/SingleItem.tsx`**
+
+```typescript
+// ....
+interface SingleItemProps {
+  item: GroceryItem;
+  editCompleted: (itemId: string) => void;
+  removeItem: (itemId: string) => void;
+  setEditId: (itemId: string) => void;
+}
+
+const SingleItem = ({
+  item,
+  editCompleted,
+  removeItem,
+  setEditId,
+}: SingleItemProps) => {
+  return (
+    <div className="single-item">
+      // ....
+      <button
+        className="btn icon-btn"
+        type="button"
+        onClick={() => setEditId(item.id)}
+        disabled={false}
+      >
+        <FiEdit size={18} />
+      </button>
+      // ....
+    </div>
+  );
+};
+
+export default SingleItem;
+```
+
+**Output**
+
+![Grocery List Output with Edit Name](/grocery-bud/screenshots/grocery-op5.png)
+
+---
+
+**Save Grocery to local storage**
+
+**Update `src/App.tsx`**
+
+```ts
+// import { groceryItems } from "./data/groceryItems";
+// ....
+const getLocalStorage = () => {
+  let list = localStorage.getItem("grocery-list");
+  if (list) {
+    return JSON.parse(list) as GroceryItem[];
+  }
+  return [];
+};
+
+const setLocalStorage = (items: GroceryItem[]) => {
+  localStorage.setItem("grocery-list", JSON.stringify(items));
+};
+
+const initialList = getLocalStorage();
+
+const App = () => {
+  const [items, setItems] = useState<GroceryItem[]>(initialList);
+  // ....
+
+  const addItem = (itemName: string) => {
+    // ....
+    setLocalStorage(newItems);
+    toast.success("item added to the list");
+  };
+
+  const editCompleted = (itemId: string) => {
+    // ...
+    setLocalStorage(newItems);
+  };
+
+  const removeItem = (itemId: string) => {
+    // ....
+    setLocalStorage(newItems);
+    toast.success("item deleted");
+  };
+
+  const updateItemName = (itemEditName: string) => {
+    // ....
+    setLocalStorage(newItems);
+    toast.success("item updated");
+  };
+};
+```
+
+---
+
+**Run the Project**
+
+```bash
+npm run dev
+```
+
+Visit `http://localhost:5173` to see your grocery bud in action.
