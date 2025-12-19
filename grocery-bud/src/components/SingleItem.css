@@ -1,0 +1,15 @@
+.single-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  column-gap: 1rem;
+  align-items: center;
+}
+.single-item p {
+  letter-spacing: var(--letterSpacing);
+}
+
+.remove-btn {
+  padding: 0.15rem 0.25rem;
+  font-size: 0.75rem;
+  background: var(--black);
+}

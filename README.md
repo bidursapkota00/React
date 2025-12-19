@@ -23,6 +23,7 @@
 15. [Optimizations](#optimizations)
 16. [Basic Project1: Filter Menu](#basic-project1-filter-menu)
 17. [Basic Project2: Carousel](#basic-project2-carousel)
+18. [Basic Project3: Grocery Bud](#basic-project3-grocery-bud)
 
 ---
 
@@ -2777,7 +2778,7 @@ main {
 npm run dev
 ```
 
-Visit `http://localhost:5173` to see your menu in action.
+Visit `http://localhost:5173` to see your Carousel in action.
 
 ---
 
@@ -3003,35 +3004,6 @@ ul {
   background: var(--primary-700);
   box-shadow: var(--shadow-3);
 }
-.btn-hipster {
-  color: var(--primary-500);
-  background: var(--primary-200);
-}
-.btn-hipster:hover {
-  color: var(--primary-200);
-  background: var(--primary-700);
-}
-.btn-block {
-  width: 100%;
-}
-
-/* alerts */
-.alert {
-  padding: 0.375rem 0.75rem;
-  margin-bottom: 1rem;
-  border-color: transparent;
-  border-radius: var(--borderRadius);
-}
-
-.alert-danger {
-  color: var(--red-dark);
-  background: var(--red-light);
-}
-.alert-success {
-  color: var(--green-dark);
-  background: var(--green-light);
-}
-/* form */
 
 .form {
   width: 90vw;
@@ -3058,10 +3030,6 @@ ul {
   border: 1px solid var(--grey-200);
 }
 
-.form-row {
-  margin-bottom: 1rem;
-}
-
 .form-textarea {
   height: 7rem;
 }
@@ -3069,114 +3037,24 @@ ul {
   font-family: inherit;
   color: var(--grey-400);
 }
-.form-alert {
-  color: var(--red-dark);
-  letter-spacing: var(--letterSpacing);
-  text-transform: capitalize;
-}
-/* alert */
-
-@keyframes spinner {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.loading {
-  width: 6rem;
-  height: 6rem;
-  border: 5px solid var(--grey-400);
-  border-radius: 50%;
-  border-top-color: var(--primary-500);
-  animation: spinner 0.6s linear infinite;
-  margin: 0 auto;
-}
-
-/* title */
-
-.title {
-  text-align: center;
-}
-
-.title-underline {
-  background: var(--primary-500);
-  width: 7rem;
-  height: 0.25rem;
-  margin: 0 auto;
-  margin-top: 1rem;
-}
-/* ============= PROJECT CSS =============== */
-
-.section-center {
-  width: 90vw;
-  margin: 0 auto;
-  margin-top: 8rem;
-  max-width: 30rem;
-  background: var(--white);
-  border-radius: var(--borderRadius);
-  padding: 2rem;
-  box-shadow: var(--shadow-1);
-  transition: var(--transition);
-}
-.section-center:hover {
-  box-shadow: var(--shadow-3);
-}
-
-form h4 {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-.form-control {
-  display: grid;
-  grid-template-columns: 1fr 100px;
-  gap: 1rem;
-}
-.form-input {
-  border-radius: 0;
-  border-top-left-radius: var(--borderRadius);
-  border-bottom-left-radius: var(--borderRadius);
-}
-.form-control .btn {
-  border-radius: 0;
-  border-top-right-radius: var(--borderRadius);
-  border-bottom-right-radius: var(--borderRadius);
-}
-
-.items {
-  margin-top: 2rem;
-  display: grid;
-  row-gap: 1rem;
-}
-.single-item {
-  display: grid;
-  grid-template-columns: auto 1fr auto auto;
-  column-gap: 1rem;
-  align-items: center;
-}
-.single-item p {
-  letter-spacing: var(--letterSpacing);
-}
-
-.remove-btn {
-  padding: 0.15rem 0.25rem;
-  font-size: 0.75rem;
-  background: var(--black);
-}
-
-.Toastify__toast {
-  text-transform: capitalize;
-}
 ```
 
 ---
 
 **Create SingleItem Component**
 
+**Install react-icons**
+
+```bash
+npm install react-icons
+```
+
 **Create `src/components/SingleItem.tsx`**
 
 ```typescript
 import { type GroceryItem } from "../types/groceryItem";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
+import "./SingleItem.css";
 
 interface SingleItemProps {
   item: GroceryItem;
@@ -3195,12 +3073,7 @@ const SingleItem = ({ item }: SingleItemProps) => {
         {item.name}
       </p>
 
-      <button
-        className="btn icon-btn"
-        type="button"
-        onClick={() => null}
-        disabled={false}
-      >
+      <button className="btn icon-btn" type="button" onClick={() => null}>
         <FiEdit size={18} />
       </button>
 
@@ -3221,7 +3094,21 @@ export default SingleItem;
 **Create `src/components/SingleItem.css`**
 
 ```css
+.single-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  column-gap: 1rem;
+  align-items: center;
+}
+.single-item p {
+  letter-spacing: var(--letterSpacing);
+}
 
+.remove-btn {
+  padding: 0.15rem 0.25rem;
+  font-size: 0.75rem;
+  background: var(--black);
+}
 ```
 
 ---
@@ -3231,8 +3118,9 @@ export default SingleItem;
 **Create `src/components/Items.tsx`**
 
 ```typescript
-import SingleItem from "./SingleItemCopy";
+import SingleItem from "./SingleItem";
 import { type GroceryItem } from "../types/groceryItem";
+import "./Items.css";
 
 interface ItemsProps {
   items: GroceryItem[];
@@ -3254,18 +3142,23 @@ export default Items;
 **Create `src/components/Items.css`**
 
 ```css
-
+.items {
+  margin-top: 2rem;
+  display: grid;
+  row-gap: 1rem;
+}
 ```
 
 ---
 
-**Create Main App Component**
+**Update Main App Component**
 
-**Create `src/App.tsx`**
+**Update `src/App.tsx`**
 
 ```typescript
-import Items from "./components/ItemsCopy";
+import Items from "./components/Items";
 import { groceryItems } from "./data/groceryItems";
+import "./App.css";
 
 const App = () => {
   return (
@@ -3281,7 +3174,20 @@ export default App;
 **Create `src/App.css`**
 
 ```css
-
+.section-center {
+  width: 90vw;
+  margin: 0 auto;
+  margin-top: 8rem;
+  max-width: 30rem;
+  background: var(--white);
+  border-radius: var(--borderRadius);
+  padding: 2rem;
+  box-shadow: var(--shadow-1);
+  transition: var(--transition);
+}
+.section-center:hover {
+  box-shadow: var(--shadow-3);
+}
 ```
 
 **Output**
@@ -3299,6 +3205,7 @@ import Items from "./components/Items";
 import { groceryItems } from "./data/groceryItems";
 import { useState } from "react";
 import { type GroceryItem } from "./types/groceryItem";
+import "./App.css";
 
 const App = () => {
   const [items, setItems] = useState<GroceryItem[]>(groceryItems);
@@ -3330,6 +3237,7 @@ export default App;
 ```typescript
 import SingleItem from "./SingleItem";
 import { type GroceryItem } from "../types/groceryItem";
+import "./Items.css";
 
 interface ItemsProps {
   items: GroceryItem[];
@@ -3386,12 +3294,19 @@ export default SingleItem;
 
 **ADD Delete Feature**
 
+**Install react-toastify**
+
+```bash
+npm install react-toastify
+```
+
 **Update `src/App.tsx`**
 
 ```typescript
 // ...
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "./App.css";
 
 const App = () => {
   const [items, setItems] = useState<GroceryItem[]>(groceryItems);
@@ -3419,6 +3334,15 @@ const App = () => {
 export default App;
 ```
 
+**Update `src/App.css`**
+
+```css
+/* ... */
+.Toastify__toast {
+  text-transform: capitalize;
+}
+```
+
 ---
 
 **Update `src/components/Items.tsx`**
@@ -3426,6 +3350,7 @@ export default App;
 ```typescript
 import SingleItem from "./SingleItem";
 import { type GroceryItem } from "../types/groceryItem";
+import "./Items.css";
 
 interface ItemsProps {
   items: GroceryItem[];
@@ -3496,6 +3421,7 @@ export default SingleItem;
 ```typescript
 import { useState, type FormEvent } from "react";
 import { toast } from "react-toastify";
+import "./Form.css";
 
 interface FormProps {
   addItem: (itemName: string) => void;
@@ -3522,6 +3448,7 @@ const Form = ({ addItem }: FormProps) => {
           type="text"
           className="form-input"
           value={newItemName}
+          placeholder="e.g. eggs"
           onChange={(event) => setNewItemName(event.target.value)}
         />
         <button type="submit" className="btn">
@@ -3538,7 +3465,24 @@ export default Form;
 **Create `src/components/Form.css`**
 
 ```css
-
+form h4 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.form-control {
+  display: grid;
+  grid-template-columns: 1fr 100px;
+}
+.form-input {
+  border-radius: 0;
+  border-top-left-radius: var(--borderRadius);
+  border-bottom-left-radius: var(--borderRadius);
+}
+.form-control .btn {
+  border-radius: 0;
+  border-top-right-radius: var(--borderRadius);
+  border-bottom-right-radius: var(--borderRadius);
+}
 ```
 
 ---
@@ -3550,7 +3494,7 @@ export default Form;
 ```ts
 //...
 import { nanoid } from "nanoid";
-import Form from "./components/FormCopy";
+import Form from "./components/Form";
 
 const App = () => {
   const [items, setItems] = useState<GroceryItem[]>(groceryItems);
@@ -3596,12 +3540,23 @@ export default App;
 
 ```typescript
 //...
+import { useEffect, useRef, useState } from "react";
+//....
 
 const App = () => {
   const [items, setItems] = useState<GroceryItem[]>(groceryItems);
   const [editId, setEditId] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const editItemName = (newName: string) => {
+  useEffect(() => {
+    if (editId && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [editId]);
+
+  // ...
+
+  const updateItemName = (newName: string) => {
     const newItems = items.map((item) => {
       if (item.id === editId) {
         return { ...item, name: newName };
@@ -3621,6 +3576,7 @@ const App = () => {
         updateItemName={updateItemName}
         editItemId={editId}
         itemToEdit={items.find((item) => item.id === editId)}
+        inputRef={inputRef}
       />
       <Items
         items={items}
@@ -3635,76 +3591,12 @@ const App = () => {
 export default App;
 ```
 
-**Update `src/components/Form.tsx`**
-
-```typescript
-import { useState, type FormEvent, useEffect } from "react";
-import { toast } from "react-toastify";
-import { type GroceryItem } from "../types/groceryItem";
-
-interface FormProps {
-  addItem: (itemName: string) => void;
-  editId: string | null;
-  updateItem: (itemName: string) => void;
-  itemToEdit?: GroceryItem;
-}
-
-const Form = ({
-  addItem,
-  editItemId,
-  updateItemName,
-  itemToEdit,
-}: FormProps) => {
-  const [newItemName, setNewItemName] = useState("");
-
-  useEffect(() => {
-    if (itemToEdit) {
-      setNewItemName(itemToEdit.name);
-    } else {
-      setNewItemName("");
-    }
-  }, [itemToEdit]);
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!newItemName) {
-      toast.error("please provide value");
-      return;
-    }
-    if (editItemId) {
-      updateItemName(newItemName);
-    } else {
-      addItem(newItemName);
-    }
-    setNewItemName("");
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <h4>grocery bud</h4>
-      <div className="form-control">
-        <input
-          type="text"
-          className="form-input"
-          value={newItemName}
-          onChange={(event) => setNewItemName(event.target.value)}
-        />
-        <button type="submit" className="btn">
-          {editItemId ? "edit item" : "add item"}
-        </button>
-      </div>
-    </form>
-  );
-};
-
-export default Form;
-```
-
 **Update `src/components/Items.tsx`**
 
 ```typescript
 import SingleItem from "./SingleItem";
 import { type GroceryItem } from "../types/groceryItem";
+import "./Items.css";
 
 interface ItemsProps {
   items: GroceryItem[];
@@ -3758,7 +3650,6 @@ const SingleItem = ({
         className="btn icon-btn"
         type="button"
         onClick={() => setEditId(item.id)}
-        disabled={false}
       >
         <FiEdit size={18} />
       </button>
@@ -3768,6 +3659,76 @@ const SingleItem = ({
 };
 
 export default SingleItem;
+```
+
+**Update `src/components/Form.tsx`**
+
+```typescript
+import { useState, type FormEvent, useEffect } from "react";
+import { toast } from "react-toastify";
+import { type GroceryItem } from "../types/groceryItem";
+import "./Form.css";
+
+interface FormProps {
+  addItem: (itemName: string) => void;
+  editItemId: string | null;
+  updateItemName: (itemName: string) => void;
+  itemToEdit?: GroceryItem;
+  inputRef: React.RefObject<HTMLInputElement | null>;
+}
+
+const Form = ({
+  addItem,
+  editItemId,
+  updateItemName,
+  itemToEdit,
+  inputRef,
+}: FormProps) => {
+  const [newItemName, setNewItemName] = useState("");
+
+  useEffect(() => {
+    if (itemToEdit) {
+      setNewItemName(itemToEdit.name);
+    } else {
+      setNewItemName("");
+    }
+  }, [itemToEdit]);
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!newItemName) {
+      toast.error("please provide value");
+      return;
+    }
+    if (editItemId) {
+      updateItemName(newItemName);
+    } else {
+      addItem(newItemName);
+    }
+    setNewItemName("");
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <h4>grocery bud</h4>
+      <div className="form-control">
+        <input
+          type="text"
+          className="form-input"
+          value={newItemName}
+          ref={inputRef}
+          placeholder="e.g. eggs"
+          onChange={(event) => setNewItemName(event.target.value)}
+        />
+        <button type="submit" className="btn">
+          {editItemId ? "edit item" : "add item"}
+        </button>
+      </div>
+    </form>
+  );
+};
+
+export default Form;
 ```
 
 **Output**
@@ -3834,4 +3795,4 @@ const App = () => {
 npm run dev
 ```
 
-Visit `http://localhost:5173` to see your grocery bud in action.
+Visit `http://localhost:5173` to see your Grocery bud in action.

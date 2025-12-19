@@ -1,0 +1,17 @@
+.section-center {
+  width: 90vw;
+  margin: 0 auto;
+  margin-top: 8rem;
+  max-width: 30rem;
+  background: var(--white);
+  border-radius: var(--borderRadius);
+  padding: 2rem;
+  box-shadow: var(--shadow-1);
+  transition: var(--transition);
+}
+.section-center:hover {
+  box-shadow: var(--shadow-3);
+}
+.Toastify__toast {
+  text-transform: capitalize;
+}
